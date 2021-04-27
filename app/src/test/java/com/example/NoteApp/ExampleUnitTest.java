@@ -1,4 +1,4 @@
-package com.example.sqllitetest;
+package com.example.NoteApp;
 
 import org.junit.Test;
 

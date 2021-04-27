@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.sqllitetest.R;
+import com.example.NoteApp.R;
 
 public class MainActivity extends AppCompatActivity {
 
