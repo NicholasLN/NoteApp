@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -32,7 +33,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SQLiteHelper sqLiteHelper = new SQLiteHelper(MainActivity.this);
+        Note note = new Note(1,getApplicationContext());
+
 
         //TODO replace shared preferences with sql
         ListView listView = findViewById(R.id.listView);
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
             folders.add("Example Folder");
         } else {
             folders = new ArrayList(set);
+
         }
 
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, folders);

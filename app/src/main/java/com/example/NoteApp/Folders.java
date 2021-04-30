@@ -33,7 +33,7 @@ public class Folders extends AppCompatActivity {
 
         //TODO replace with sql
         ListView listView = findViewById(R.id.listView);
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.NoteApp", Context.MODE_PRIVATE);
         HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
 
 
@@ -72,7 +72,7 @@ public class Folders extends AppCompatActivity {
                 new AlertDialog.Builder(Folders.this)
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this note?")
+                        .setMessage("Do you want to delete this folder?")
                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {

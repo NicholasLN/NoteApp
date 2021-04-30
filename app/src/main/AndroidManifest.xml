@@ -16,6 +16,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Folders">
+        </activity>
+        <activity android:name=".NoteEditor">
+
+        </activity>
     </application>
 
 </manifest>
