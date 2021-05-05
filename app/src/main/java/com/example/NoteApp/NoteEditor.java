@@ -23,6 +23,9 @@ public class NoteEditor extends AppCompatActivity {
 
         EditText editText = findViewById(R.id.editText);
 
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         //Fetch data that is passed from Folders
         Intent intent = getIntent();
 
@@ -58,5 +61,11 @@ public class NoteEditor extends AppCompatActivity {
                 // add your code here
             }
         });
+    }
+
+        public boolean onOptionsItemSelected(MenuItem item){
+        Intent myIntent = new Intent(getApplicationContext(), Folders.class);
+        startActivityForResult(myIntent, 0);
+        return true;
     }
 }

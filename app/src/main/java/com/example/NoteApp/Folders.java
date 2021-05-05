@@ -31,6 +31,9 @@ public class Folders extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folders);
 
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         //TODO replace with sql
         ListView listView = findViewById(R.id.listView);
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.NoteApp", Context.MODE_PRIVATE);
@@ -86,5 +89,11 @@ public class Folders extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+        public boolean onOptionsItemSelected(MenuItem item){
+        Intent myIntent = new Intent(getApplicationContext(), Folders.class);
+        startActivityForResult(myIntent, 0);
+        return true;
     }
 }
