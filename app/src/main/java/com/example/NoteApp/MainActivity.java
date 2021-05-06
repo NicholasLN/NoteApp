@@ -1,6 +1,7 @@
 package com.example.NoteApp;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -51,8 +52,12 @@ public class MainActivity extends AppCompatActivity {
                 }
                 String folderPassword = folderPasswordInput.getText().toString();
                 int folderID = Folder.addFolder(folderName, folderPassword, getApplicationContext());
-                folderList.add(new Folder(folderID,getApplicationContext()));
 
+                Intent intent = new Intent(getApplicationContext(), Folders.class);
+                intent.putExtra("folderId",folderID);
+                startActivity(intent);
+
+                folderList.add(new Folder(folderID,getApplicationContext()));
                 refreshFolders();
 
             }
