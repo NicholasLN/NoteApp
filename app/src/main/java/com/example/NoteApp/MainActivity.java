@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Note note = new Note(1,getApplicationContext());
-
+        //Note note = new Note(1,getApplicationContext());
 
         //TODO replace shared preferences with sql
         ListView listView = findViewById(R.id.listView);

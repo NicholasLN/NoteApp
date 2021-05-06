@@ -1,10 +1,13 @@
 package com.example.NoteApp;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,8 +34,7 @@ public class Folders extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folders);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //TODO replace with sql
         ListView listView = findViewById(R.id.listView);
@@ -91,9 +93,18 @@ public class Folders extends AppCompatActivity {
         });
     }
 
-        public boolean onOptionsItemSelected(MenuItem item){
-        Intent myIntent = new Intent(getApplicationContext(), Folders.class);
-        startActivityForResult(myIntent, 0);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
 }
