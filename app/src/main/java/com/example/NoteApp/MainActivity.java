@@ -1,91 +1,101 @@
 package com.example.NoteApp;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    static ArrayList<String> folders = new ArrayList<>();
-    static ArrayAdapter arrayAdapter;
+    static ArrayList<Folder> folderList = new ArrayList<Folder>();
+
+    private ListView folderListView;
 
     //Creates new folder
     public void newFolder(View view)
     {
-        Intent intent = new Intent(getApplicationContext(), Folders.class);
-        startActivity(intent);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Folder Name");
+        View folderDialogInput = LayoutInflater.from(this).inflate(R.layout.folder_text_input,(ViewGroup)view.getRootView(), false);
+
+        final EditText folderNameInput = (EditText) folderDialogInput.findViewById(R.id.folderName);
+        final EditText folderPasswordInput = (EditText) folderDialogInput.findViewById(R.id.folderPassword);
+
+        builder.setView(folderDialogInput);
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+                String folderName = folderNameInput.getText().toString();
+                if(folderName.length() == 0){
+                    folderName = "New Folder";
+                }
+                String folderPassword = folderPasswordInput.getText().toString();
+                int folderID = Folder.addFolder(folderName, folderPassword, getApplicationContext());
+                folderList.add(new Folder(folderID,getApplicationContext()));
+
+                refreshFolders();
+
+            }
+        });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+//        Intent intent = new Intent(getApplicationContext(), Folders.class);
+//        startActivity(intent);
+//        folderList.add("o");
+//        listView.setAdapter(arrayAdapter);
+//        refreshFolders();
+
+    }
+
+    public void refreshFolders(){
+        FolderListAdapter adapter = new FolderListAdapter(this, R.layout.folder_list_adapter, folderList);
+        folderListView.setAdapter(adapter);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        folderListView = this.findViewById(R.id.listView);
 
-        Note note = new Note(1,getApplicationContext());
+        SQLiteHelper db = new SQLiteHelper(getApplicationContext());
 
-
-        //TODO replace shared preferences with sql
-        ListView listView = findViewById(R.id.listView);
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("folders", null);
-
-        if (set == null) {
-            folders.add("Example Folder");
-        } else {
-            folders = new ArrayList(set);
-
+        Map<Integer, List<Integer>> folders = db.fetchAllFoldersAndNotes();
+        for(Map.Entry<Integer, List<Integer>> entry: folders.entrySet()){
+            int folderID = entry.getKey();
+            Folder folder = new Folder(folderID, this.getApplicationContext());
+            folderList.add(folder);
         }
 
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, folders);
-        listView.setAdapter(arrayAdapter);
+        refreshFolders();
+        db.close();
 
-        //Goes to clicked on folder
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                // Going from MainActivity to NotesEditorActivity
-                Intent intent = new Intent(getApplicationContext(), Folders.class);
-                intent.putExtra("folderId", i);
-                startActivity(intent);
-            }
-        });
-
-        //Deletes clicked on folder.
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                final int itemToDelete = i;
-                // To delete the data from the App
-                new AlertDialog.Builder(MainActivity.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this note?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                folders.remove(itemToDelete);
-                                arrayAdapter.notifyDataSetChanged();
-                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.folders", Context.MODE_PRIVATE);
-                                HashSet<String> set = new HashSet(MainActivity.folders);
-                                sharedPreferences.edit().putStringSet("folders", set).apply();
-                            }
-                        }).setNegativeButton("No", null).show();
-                return true;
-            }
-        });
     }
 }
