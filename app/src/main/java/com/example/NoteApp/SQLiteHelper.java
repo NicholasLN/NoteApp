@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -36,6 +37,29 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+    public int addFolder(String name, String password){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String statement = String.format("INSERT INTO folders (name, password) VALUES ('%s', '%s')", name, password);
+        db.execSQL(statement);
+
+        return (int)getLastIdFromMyTable();
+    }
+    public void deleteFolder(int folderID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String statement = String.format("DELETE FROM folders WHERE folderID = %s",folderID);
+        db.execSQL(statement);
+    }
+
+    /*
+    https://stackoverflow.com/questions/4017903/get-last-inserted-value-from-sqlite-database-android
+     */
+    public long getLastIdFromMyTable()
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        SQLiteStatement st = db.compileStatement("SELECT last_insert_rowid() from folders");
+        return st.simpleQueryForLong();
+    }
+
     public HashMap<String, Object> fetchNote(int noteID){
         HashMap<String, Object> noteArray = new HashMap<String, Object>();
 
@@ -54,8 +78,26 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
         return noteArray;
     }
+    public HashMap<String, Object> fetchFolder(int folderID){
+        HashMap<String, Object> folderArray = new HashMap<String, Object>();
 
-    public void fetchAllFoldersAndNotes(){
+        // Initialize DB and Query
+        SQLiteDatabase db = this.getReadableDatabase();
+        String rawStatement = "SELECT * FROM folders WHERE folderID = " + folderID;
+
+        // Open cursor, for selecting information.
+        Cursor cursor = db.rawQuery(rawStatement, null);
+        cursor.moveToFirst();
+        // Populate array with folder information
+        folderArray.put("folderID",cursor.getInt(0));
+        folderArray.put("password",cursor.getString(1));
+        folderArray.put("name",cursor.getString(2));
+
+        return folderArray;
+
+    }
+
+    public Map<Integer, List<Integer>> fetchAllFoldersAndNotes(){
         SQLiteDatabase db = this.getReadableDatabase();
         String rawStatement = "SELECT folderID FROM folders";
         Cursor cursor = db.rawQuery(rawStatement,null);
@@ -85,6 +127,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             cursor.close();
             Log.i("SQLiteHelper",folderArray.toString());
         }
+        return folderArray;
 
 
     }
