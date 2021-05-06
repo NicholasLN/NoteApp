@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Notes Application</string>
+    <string name="hint_folder_name">Folder Name</string>
 </resources>
