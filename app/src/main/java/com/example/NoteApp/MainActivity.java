@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        folderListView = this.findViewById(R.id.noteListView);
+        folderListView = this.findViewById(R.id.folderListView);
 
         SQLiteHelper db = new SQLiteHelper(getApplicationContext());
 
