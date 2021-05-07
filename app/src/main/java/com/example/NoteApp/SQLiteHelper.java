@@ -8,9 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
-import java.lang.reflect.Array;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +26,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         // Folder Table
         String createFoldersTable= "CREATE TABLE folders (folderID INTEGER PRIMARY KEY AUTOINCREMENT, password TEXT, name TEXT)";
         String createNotesTable = "CREATE TABLE notes (noteID INTEGER PRIMARY KEY AUTOINCREMENT, folderID INTEGER, header TEXT, content TEXT, lastModified INTEGER)";
+
         db.execSQL(createFoldersTable);
         db.execSQL(createNotesTable);
     }
@@ -37,29 +36,68 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<Integer> getNotes(int folderId){
+        ArrayList<Integer> notes = new ArrayList<Integer>();
+
+        SQLiteDatabase db = getReadableDatabase();
+        String statement = String.format("SELECT * FROM notes WHERE folderID = %s",folderId);
+        Cursor cursor = db.rawQuery(statement, null);
+
+        try{
+            while(cursor.moveToNext()){
+                int noteID = cursor.getInt(0);
+                notes.add(noteID);
+            }
+        }
+        finally {
+            db.close();
+        }
+        return notes;
+    }
+
+
     public int addFolder(String name, String password){
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // In the future, for better security, this should be prepared to prevent SQL injection.
         String statement = String.format("INSERT INTO folders (name, password) VALUES ('%s', '%s')", name, password);
         db.execSQL(statement);
 
-        return (int)getLastIdFromMyTable();
+        return (int)getLastIdFromMyTable("folders");
     }
     public void deleteFolder(int folderID){
         SQLiteDatabase db = this.getWritableDatabase();
         String statement = String.format("DELETE FROM folders WHERE folderID = %s",folderID);
         db.execSQL(statement);
+        db.close();
+    }
+    public void deleteNote(int noteID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String statement = String.format("DELETE FROM notes WHERE noteID = %s",noteID);
+        db.execSQL(statement);
+        db.close();
+    }
+
+    public int addNote(int folderId, String header){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // In the future, for better security, this should be prepared to prevent SQL injection.
+        // Instant.now().getEpochSecond() gets the Unix timestamp.
+        String statement = String.format("INSERT INTO notes (folderID, header,content,lastModified) VALUES (%s, '%s','',%s)", folderId, header, Instant.now().getEpochSecond());
+        db.execSQL(statement);
+
+        return (int)getLastIdFromMyTable("notes");
+
     }
 
     /*
     https://stackoverflow.com/questions/4017903/get-last-inserted-value-from-sqlite-database-android
      */
-    public long getLastIdFromMyTable()
-    {
+    public long getLastIdFromMyTable(String tableName) {
         SQLiteDatabase db = this.getReadableDatabase();
-        SQLiteStatement st = db.compileStatement("SELECT last_insert_rowid() from folders");
+        SQLiteStatement st = db.compileStatement("SELECT last_insert_rowid() from "+tableName+"");
         return st.simpleQueryForLong();
     }
-
     public HashMap<String, Object> fetchNote(int noteID){
         HashMap<String, Object> noteArray = new HashMap<String, Object>();
 
@@ -99,6 +137,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public Map<Integer, List<Integer>> fetchAllFoldersAndNotes(){
         SQLiteDatabase db = this.getReadableDatabase();
+        //db.execSQL("INSERT INTO notes (folderID, header, content, lastModified) VALUES (10, 'directions to the gulag', 'siberia', 9999)");
         String rawStatement = "SELECT folderID FROM folders";
         Cursor cursor = db.rawQuery(rawStatement,null);
 

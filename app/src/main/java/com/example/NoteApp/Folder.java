@@ -4,7 +4,6 @@ import android.content.Context;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class Folder {
     private HashMap<String, Object> folderInformation;

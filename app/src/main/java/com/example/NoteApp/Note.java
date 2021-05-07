@@ -1,8 +1,6 @@
 package com.example.NoteApp;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.text.Html;
 
 import java.util.HashMap;
 
