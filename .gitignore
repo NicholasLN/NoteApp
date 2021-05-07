@@ -1,5 +1,6 @@
 *.iml
 .gradle
+.idea
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -10,14 +11,4 @@
 .DS_Store
 /build
 /captures
-.externalNativeBuild
-.cxx
-local.properties
-build.gradle
-/.idea/
-AndroidSqlEditorDatabases/
-.idea/jarRepositories.xml
-.idea/sqlandroid.xml
-app/build.gradle
-app/build/generated/source/buildConfig/debug/com/example/NoteApp/BuildConfig.java
 build.gradle
