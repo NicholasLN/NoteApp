@@ -1,5 +1,6 @@
 package com.example.NoteApp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -75,6 +76,7 @@ public class FolderListAdapter extends ArrayAdapter<Folder>{
                                         Intent intent = new Intent(mContext, Folders.class);
                                         intent.putExtra("folderId", folderID);
                                         mContext.startActivity(intent);
+
                                     }
                                     else{
                                         Toast.makeText(mContext,"Wrong Password!",Toast.LENGTH_SHORT).show();

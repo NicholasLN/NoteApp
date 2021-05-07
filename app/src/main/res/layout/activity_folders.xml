@@ -50,4 +50,12 @@
 
     </ListView>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:background="?android:attr/panelFullBackground"
+        app:layout_constraintBottom_toTopOf="@+id/noteListView"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

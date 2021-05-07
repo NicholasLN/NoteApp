@@ -69,7 +69,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void deleteFolder(int folderID){
         SQLiteDatabase db = this.getWritableDatabase();
         String statement = String.format("DELETE FROM folders WHERE folderID = %s",folderID);
+        String statement2 = String.format("DELETE FROM notes WHERE folderID = %s",folderID);
         db.execSQL(statement);
+        db.execSQL(statement2);
         db.close();
     }
     public void deleteNote(int noteID){

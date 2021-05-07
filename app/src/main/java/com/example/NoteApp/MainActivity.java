@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    static ArrayList<Folder> folderList = new ArrayList<Folder>();
+    static ArrayList<Folder> folderList;
 
     private ListView folderListView;
 
@@ -64,18 +64,42 @@ public class MainActivity extends AppCompatActivity {
         });
 
         builder.show();
+    }
 
-//        Intent intent = new Intent(getApplicationContext(), Folders.class);
-//        startActivity(intent);
-//        folderList.add("o");
-//        listView.setAdapter(arrayAdapter);
-//        refreshFolders();
+    public void populateFolderList(){
+        // Dump folder first so no duplicate values.
+        folderList = new ArrayList<Folder>();
 
+        // Go through database and add to folders.
+        SQLiteHelper db = new SQLiteHelper(getApplicationContext());
+        Map<Integer, List<Integer>> folders = db.fetchAllFoldersAndNotes();
+        for(Map.Entry<Integer, List<Integer>> entry: folders.entrySet()){
+            int folderID = entry.getKey();
+            Folder folder = new Folder(folderID, this.getApplicationContext());
+            folderList.add(folder);
+        }
+
+        // Close for no memory leak.
+        db.close();
     }
 
     public void refreshFolders(){
+        populateFolderList();
         FolderListAdapter adapter = new FolderListAdapter(this, R.layout.folder_list_adapter, folderList);
         folderListView.setAdapter(adapter);
+    }
+
+    // When we go back to the home activity from a folder activity (this is so renaming folders persists on back button)
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(0, 0);
+
+        startActivity(getIntent());
+        refreshFolders();
+
+        overridePendingTransition(0, 0);
     }
 
     @Override
@@ -84,17 +108,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         folderListView = this.findViewById(R.id.folderListView);
 
-        SQLiteHelper db = new SQLiteHelper(getApplicationContext());
-
-        Map<Integer, List<Integer>> folders = db.fetchAllFoldersAndNotes();
-        for(Map.Entry<Integer, List<Integer>> entry: folders.entrySet()){
-            int folderID = entry.getKey();
-            Folder folder = new Folder(folderID, this.getApplicationContext());
-            folderList.add(folder);
-        }
-
         refreshFolders();
-        db.close();
 
     }
 }
