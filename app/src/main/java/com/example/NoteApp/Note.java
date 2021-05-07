@@ -42,7 +42,7 @@ public class Note{
 
     }
     public Integer getLastModified(){
-        return (Integer)noteInformation.get("lastModified");
+        return Integer.parseInt((String)noteInformation.get("lastModified"));
     }
 
     public static int createNewNote(int folderId, String noteHeader, Context applicationContext){

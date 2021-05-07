@@ -8,11 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.ActionBarOverlayLayout;
 
 import java.util.ArrayList;
 
@@ -108,6 +112,10 @@ public class FolderListAdapter extends ArrayAdapter<Folder>{
         });
 
         folderName.setText(name);
+
+        if(!getItem(position).getPassword().isEmpty()){
+            convertView.findViewById(R.id.lockedIcon).setVisibility(View.VISIBLE);
+        }
 
         return convertView;
 

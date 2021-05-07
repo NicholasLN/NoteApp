@@ -1,6 +1,7 @@
 package com.example.NoteApp;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,12 @@ public class Folder {
         folderInformation = database.fetchFolder(noteID);
     }
 
+    public void renameFolder(String renameTo, Context applicationContext){
+        SQLiteHelper database = new SQLiteHelper(applicationContext);
+        SQLiteDatabase db = database.getWritableDatabase();
+
+        db.execSQL(String.format("UPDATE folders SET name = '%s' WHERE folderID = %s",renameTo,getID()));
+    }
     public String getName(){ return (String)folderInformation.get("name"); }
     public String getPassword(){ return (String)folderInformation.get("password"); }
     public Integer getID(){ return (int)folderInformation.get("folderID"); }

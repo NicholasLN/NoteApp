@@ -13,7 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class NoteListAdapter extends ArrayAdapter<Note> {
 
@@ -45,6 +48,12 @@ public class NoteListAdapter extends ArrayAdapter<Note> {
         LinearLayout layout = (LinearLayout) convertView.findViewById(R.id.noteListAdapterLayout);
         TextView noteHeader = (TextView) convertView.findViewById(R.id.noteHeader);
         TextView noteMsg = (TextView) convertView.findViewById(R.id.noteContent);
+        TextView date = (TextView) convertView.findViewById(R.id.date);
+
+        Date unixToDate = new Date(note.getLastModified()*1000L);
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("MM/dd/yy\nhh:ss aa");
+        sdf.setTimeZone(TimeZone.getDefault());
+        date.setText(sdf.format(unixToDate));
 
         layout.setOnClickListener(new View.OnClickListener() {
             @Override

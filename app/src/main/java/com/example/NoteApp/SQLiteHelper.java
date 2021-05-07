@@ -11,6 +11,7 @@ import android.util.Log;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -137,11 +138,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     public Map<Integer, List<Integer>> fetchAllFoldersAndNotes(){
         SQLiteDatabase db = this.getReadableDatabase();
-        //db.execSQL("INSERT INTO notes (folderID, header, content, lastModified) VALUES (10, 'directions to the gulag', 'siberia', 9999)");
-        String rawStatement = "SELECT folderID FROM folders";
+        String rawStatement = "SELECT * FROM folders ORDER BY folderID ASC";
         Cursor cursor = db.rawQuery(rawStatement,null);
 
-        Map<Integer, List<Integer>> folderArray = new HashMap<Integer, List<Integer>>();
+                                                // LinkedHashMap to retain order.
+        Map<Integer, List<Integer>> folderArray = new LinkedHashMap<Integer, List<Integer>>();
 
         try {
             // Go through all folder IDs.
