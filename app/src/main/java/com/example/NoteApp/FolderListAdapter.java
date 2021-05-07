@@ -1,19 +1,13 @@
 package com.example.NoteApp;
 
-import android.app.LauncherActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.CycleInterpolator;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +34,10 @@ public class FolderListAdapter extends ArrayAdapter<Folder>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent){
         String name = getItem(position).getName();
-        boolean deleted = false;
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource,parent,false);
-        TextView folderName = (TextView) convertView.findViewById(R.id.folderListTextView);
+        TextView folderName = (TextView) convertView.findViewById(R.id.noteHeader);
         folderName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -2,6 +2,7 @@ package com.example.NoteApp;
 
 import android.content.Context;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -27,6 +28,17 @@ public class Folder {
         SQLiteHelper database = new SQLiteHelper(applicationContext);
         database.deleteFolder(folderID);
         database.close();
+    }
+    static ArrayList<Note> getNotesForFolder(int folderId, Context applicationContext){
+        ArrayList<Note> notes = new ArrayList<Note>();
+
+        SQLiteHelper database = new SQLiteHelper(applicationContext);
+        ArrayList<Integer> notesListRaw = database.getNotes(folderId);
+
+        notesListRaw.forEach(note->notes.add(new Note(note,applicationContext)));
+
+        return notes;
+
     }
 
 }

@@ -6,11 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,14 +22,43 @@ import java.util.HashSet;
 
 public class Folders extends AppCompatActivity {
 
-    static ArrayList<String> notes = new ArrayList<>();
-    static ArrayAdapter arrayAdapter;
+    ArrayList<Note> notes;
     int folderId;
+    ListView noteListView;
 
     public void newNote(View view)
     {
-        Intent intent = new Intent(getApplicationContext(), NoteEditor.class);
-        startActivity(intent);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Note Header");
+        View noteDialogInput = LayoutInflater.from(this).inflate(R.layout.note_text_input,(ViewGroup)view.getRootView(), false);
+
+        final EditText noteNameInput = (EditText) noteDialogInput.findViewById(R.id.noteName);
+
+        builder.setView(noteDialogInput);
+
+        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int newNoteId = Note.createNewNote(folderId, noteNameInput.getText().toString(),getApplicationContext());
+
+                Intent intent = new Intent(getApplicationContext(), NoteEditor.class);
+                intent.putExtra("noteId",newNoteId);
+                startActivity(intent);
+
+                notes.add(new Note(newNoteId,getApplicationContext()));
+                refreshNotes();
+                dialog.dismiss();
+
+            }
+        });
+        builder.show();
+
+
+    }
+
+    public void refreshNotes(){
+        NoteListAdapter noteListAdapter = new NoteListAdapter(this, R.layout.note_list_adapter, notes);
+        noteListView.setAdapter(noteListAdapter);
     }
 
     @Override
@@ -34,64 +66,23 @@ public class Folders extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_folders);
 
+        // Action Bar
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //
 
-        //TODO replace with sql
-        ListView listView = findViewById(R.id.listView);
-        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.NoteApp", Context.MODE_PRIVATE);
-        HashSet<String> set = (HashSet<String>) sharedPreferences.getStringSet("notes", null);
+        folderId = getIntent().getIntExtra("folderId",0);
+        notes = Folder.getNotesForFolder(folderId, getApplicationContext());
+        noteListView = findViewById(R.id.noteListView);
 
-
-        Intent lastIntent = getIntent();
-        folderId = lastIntent.getIntExtra("folderId", -1);
-        //TODO get folder id and populate notes based on that id. Make box where folder can be named
-
-        if (set == null) {
-            notes.add("Example note");
-        } else {
-            notes = new ArrayList(set);
-        }
-
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_expandable_list_item_1, notes);
-        listView.setAdapter(arrayAdapter);
-
-        //Opens clicked on note
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                // Going from MainActivity to NotesEditorActivity
-                Intent intent = new Intent(getApplicationContext(), NoteEditor.class);
-                intent.putExtra("noteId", i);
-                startActivity(intent);
-            }
-        });
-
-        //Deletes clicked on note
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                final int itemToDelete = i;
-                // To delete the data from the App
-                new AlertDialog.Builder(Folders.this)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setTitle("Are you sure?")
-                        .setMessage("Do you want to delete this folder?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                notes.remove(itemToDelete);
-                                arrayAdapter.notifyDataSetChanged();
-                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("com.example.notes", Context.MODE_PRIVATE);
-                                HashSet<String> set = new HashSet(Folders.notes);
-                                sharedPreferences.edit().putStringSet("notes", set).apply();
-                            }
-                        }).setNegativeButton("No", null).show();
-                return true;
-            }
-        });
+        refreshNotes();
     }
+
+
+
+
+
+    // ACTION BAR
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
