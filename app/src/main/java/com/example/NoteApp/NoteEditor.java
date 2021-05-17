@@ -53,7 +53,7 @@ public class NoteEditor extends AppCompatActivity {
         note = new Note(noteID, getApplicationContext());
 
         // Turn html back into text.
-        SpannableString text = new SpannableString(Html.fromHtml(note.getContent()));
+        SpannableString text = new SpannableString(Html.fromHtml(note.getContent(), HtmlCompat.FROM_HTML_MODE_LEGACY));
         textEdit.setText(text);
 
         TextView header = findViewById(R.id.noteHeaderEditor);
