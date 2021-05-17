@@ -1,3 +1,2 @@
-include ':RTextEditorView'
 include ':app'
-rootProject.name = "sqllite test"
+rootProject.name = "NoteApp"
