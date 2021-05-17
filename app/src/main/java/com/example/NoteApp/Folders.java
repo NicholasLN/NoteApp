@@ -103,6 +103,18 @@ public class Folders extends AppCompatActivity {
         refreshNotes();
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(0, 0);
+
+        startActivity(getIntent());
+        refreshNotes();
+
+        overridePendingTransition(0, 0);
+    }
+
 
 
 

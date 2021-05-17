@@ -3,6 +3,8 @@ package com.example.NoteApp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.Html;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.text.HtmlCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -90,7 +93,7 @@ public class NoteListAdapter extends ArrayAdapter<Note> {
 
 
         noteHeader.setText(noteTitle);
-        noteMsg.setText(noteContent);
+        noteMsg.setText(new SpannableString(Html.fromHtml(noteContent, HtmlCompat.FROM_HTML_MODE_LEGACY)));
         return convertView;
 
     }

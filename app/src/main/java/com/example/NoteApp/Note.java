@@ -1,6 +1,7 @@
 package com.example.NoteApp;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.HashMap;
 
@@ -43,6 +44,18 @@ public class Note{
     }
     public Integer getLastModified(){
         return Integer.parseInt((String)noteInformation.get("lastModified"));
+    }
+
+
+    public void updateContent(String newContent){
+//        newContent = newContent.replace("'","''");
+
+        SQLiteHelper db = new SQLiteHelper(context);
+        SQLiteDatabase Writable = db.getWritableDatabase();
+        String sqlStatement = String.format("UPDATE notes SET content = '%s' WHERE noteID = %s",newContent,this.getID());
+        Writable.execSQL(sqlStatement);
+        db.close();
+
     }
 
     public static int createNewNote(int folderId, String noteHeader, Context applicationContext){
